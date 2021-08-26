@@ -16,8 +16,16 @@ type Label struct {
 	Color    string
 }
 
+type Connection struct {
+	Host     string
+	Port     int
+	ServerId int
+	User     string
+	Password string
+}
 type Config struct {
-	Labels []Label
+	Connection Connection
+	Labels     []Label
 }
 
 func LoadConfig() Config {
