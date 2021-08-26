@@ -1,0 +1,28 @@
+{
+  "labels": [
+    {
+      "text": "23:09",
+      "x": 460,
+      "y": 185,
+      "fontSize": 45,
+      "font": "fonts/Arial.ttf",
+      "color": "#000000"
+    },
+    {
+      "text": "1/32",
+      "x": 175,
+      "y": 240,
+      "fontSize": 30,
+      "font": "fonts/Arial.ttf",
+      "color": "#000000"
+    },
+    {
+      "text": "1",
+      "x": 730,
+      "y": 240,
+      "fontSize": 30,
+      "font": "fonts/Arial.ttf",
+      "color": "#000000"
+    }
+  ]
+}
