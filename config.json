@@ -8,7 +8,7 @@
   },
   "labels": [
     {
-      "text": "12:00",
+      "text": "%timeHH%:%timeMM%:%timeSS%",
       "x": 460,
       "y": 185,
       "fontSize": 45,

@@ -2,6 +2,7 @@ package label
 
 import (
 	"dynts-bann3r/src/teamspeak"
+	"dynts-bann3r/src/utils"
 	"errors"
 	"regexp"
 	"strings"
@@ -12,6 +13,9 @@ import (
 var m = map[string]func(*ts3.Client) (string, error){
 	"clientsonline": teamspeak.CountOnlineClients,
 	"maxclients":    teamspeak.GetMaxClients,
+	"timeHH":        utils.GetHours,
+	"timeMM":        utils.GetMinutes,
+	"timeSS":        utils.GetSeconds,
 }
 
 var marg = map[string]func(*ts3.Client, []string) (string, error){
