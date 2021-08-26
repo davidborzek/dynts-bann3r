@@ -1,7 +1,14 @@
 {
+  "connection": {
+    "host": "TS_HOST",
+    "port": 10011,
+    "serverId": 1,
+    "user": "TS_USER",
+    "password": "TS_PASSWORD"
+  },
   "labels": [
     {
-      "text": "23:09",
+      "text": "12:00",
       "x": 460,
       "y": 185,
       "fontSize": 45,
@@ -9,7 +16,7 @@
       "color": "#000000"
     },
     {
-      "text": "1/32",
+      "text": "%clientsonline%/%maxclients%",
       "x": 175,
       "y": 240,
       "fontSize": 30,
@@ -17,7 +24,7 @@
       "color": "#000000"
     },
     {
-      "text": "1",
+      "text": "%groupcount[6,36,159]%",
       "x": 730,
       "y": 240,
       "fontSize": 30,
