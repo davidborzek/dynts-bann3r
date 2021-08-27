@@ -22,11 +22,11 @@ var marg = map[string]func(*ts3.Client, []string) (string, error){
 	"groupcount": teamspeak.CountOnlineClientsInGroups,
 }
 
-func replacePlaceholder(placeholder string, client *ts3.Client) (string, error) {
+var replacePlaceholder = func(placeholder string, client *ts3.Client) (string, error) {
 	fn := m[placeholder]
 
 	if fn == nil {
-		return "", errors.New("placeholder: " + placeholder + "does not exists")
+		return "", errors.New("placeholder: '" + placeholder + "' does not exists")
 	}
 
 	return fn(client)
@@ -36,39 +36,49 @@ func replacePlaceholderWithArguments(placeholder string, client *ts3.Client, arg
 	fn := marg[placeholder]
 
 	if fn == nil {
-		return "", errors.New("placeholder: " + placeholder + "does not exists")
+		return "", errors.New("placeholder: '" + placeholder + "' does not exists")
 	}
 
 	return fn(client, args)
 }
 
+func getPlaceholderList(text string) []string {
+	placeholderRegexp, _ := regexp.Compile("%[^%]+%")
+	matches := placeholderRegexp.FindAllString(text, -1)
+
+	return matches
+}
+
+func getArguments(placeholder string) []string {
+	argumentRegexp, _ := regexp.Compile(`\[[^\[\]]+\]`)
+	matches := argumentRegexp.FindAllString(placeholder, 1)
+
+	var args []string
+
+	if len(matches) > 0 {
+		argStr := strings.ReplaceAll(matches[0], "[", "")
+		argStr = strings.ReplaceAll(argStr, "]", "")
+
+		args = strings.Split(argStr, ",")
+	}
+
+	return args
+}
+
 func GenerateLabel(text string, client *ts3.Client) (string, error) {
-	r, _ := regexp.Compile("%[^%]+%")
-	z, _ := regexp.Compile(`\[[^\[\]]+\]`)
+	placeholderList := getPlaceholderList(text)
 
-	a := r.FindAllString(text, -1)
-
-	for _, placeholder := range a {
+	for _, placeholder := range placeholderList {
 		p := placeholder
 
-		b := z.FindAllString(p, 1)
-
-		var params []string
-
-		if len(b) > 0 {
-			paramsStr := strings.ReplaceAll(b[0], "[", "")
-			paramsStr = strings.ReplaceAll(paramsStr, "]", "")
-
-			p = strings.ReplaceAll(p, b[0], "")
-
-			params = strings.Split(paramsStr, ",")
-		}
+		args := getArguments(p)
 
 		var replaced string
 		var err error
 
-		if len(params) > 0 {
-			replaced, err = replacePlaceholderWithArguments(strings.ReplaceAll(p, "%", ""), client, params)
+		if len(args) > 0 {
+			p := strings.ReplaceAll(p, "["+strings.Join(args, ",")+"]", "")
+			replaced, err = replacePlaceholderWithArguments(strings.ReplaceAll(p, "%", ""), client, args)
 		} else {
 			replaced, err = replacePlaceholder(strings.ReplaceAll(p, "%", ""), client)
 		}
