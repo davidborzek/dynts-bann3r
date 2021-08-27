@@ -1,4 +1,5 @@
 {
+  "refreshInterval": 60,
   "connection": {
     "host": "TS_HOST",
     "port": 10011,
@@ -8,7 +9,7 @@
   },
   "labels": [
     {
-      "text": "%timeHH%:%timeMM%:%timeSS%",
+      "text": "%timeHH%:%timeMM%",
       "x": 460,
       "y": 185,
       "fontSize": 45,

@@ -5,7 +5,6 @@ import (
 	"dynts-bann3r/src/image"
 	"dynts-bann3r/src/label"
 	"dynts-bann3r/src/teamspeak"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -20,7 +19,7 @@ func main() {
 	client := teamspeak.Login(cfg.Connection)
 	defer client.Close()
 
-	fmt.Printf("Starting dynts-bann3r. Updating every 5 seconds...")
+	log.Printf("[starting] dynts-bann3r - refreshing every %d seconds \n", cfg.RefreshInterval)
 
 	schedule(cfg, client)
 
@@ -33,7 +32,7 @@ func schedule(cfg config.Config, client *ts3.Client) {
 	go serveBanner()
 
 	for {
-		fmt.Printf("updating data...\n")
+		log.Printf("[schedule] refreshing banner.png \n")
 
 		for i, val := range cfg.Labels {
 			text, err := label.GenerateLabel(val.Text, client)
@@ -47,7 +46,7 @@ func schedule(cfg config.Config, client *ts3.Client) {
 
 		image.AddLabelsToImage(filledLabels, "template.png", "banner.png")
 
-		time.Sleep(5 * time.Second)
+		time.Sleep(time.Duration(cfg.RefreshInterval) * time.Second)
 	}
 }
 
@@ -57,6 +56,8 @@ func serveBanner() {
 
 		if err == nil {
 			rw.Write(dat)
+		} else {
+			log.Printf("An error occurred serving the banner.png: %v \n", err)
 		}
 	})
 

@@ -24,8 +24,9 @@ type Connection struct {
 	Password string
 }
 type Config struct {
-	Connection Connection
-	Labels     []Label
+	RefreshInterval int
+	Connection      Connection
+	Labels          []Label
 }
 
 func LoadConfig() Config {
