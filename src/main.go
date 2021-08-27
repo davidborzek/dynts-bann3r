@@ -48,7 +48,7 @@ func schedule(cfg config.Config, client *ts3.Client) {
 			filledLabels[i].Text = text
 		}
 
-		banner = image.AddLabelsToImage(filledLabels, "template.png")
+		banner = image.AddLabelsToImage(filledLabels, cfg.TemplatePath)
 
 		time.Sleep(time.Duration(cfg.RefreshInterval) * time.Second)
 	}

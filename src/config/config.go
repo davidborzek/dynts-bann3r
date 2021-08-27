@@ -27,6 +27,7 @@ type Config struct {
 	RefreshInterval int
 	Connection      Connection
 	Labels          []Label
+	TemplatePath    string
 }
 
 func LoadConfig() Config {
@@ -35,6 +36,7 @@ func LoadConfig() Config {
 	viper.AddConfigPath(".")
 
 	viper.SetDefault("RefreshInterval", 60)
+	viper.SetDefault("TemplatePath", "template.png")
 
 	viper.SetDefault("Connection.Port", 10011)
 	viper.SetDefault("Connection.ServerId", 1)

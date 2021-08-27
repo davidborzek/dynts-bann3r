@@ -16,5 +16,6 @@
       "font": "Arial.ttf",
       "color": "#000000"
     }
-  ]
+  ],
+  "templatePath": "/path/to/your/template.png"
 }

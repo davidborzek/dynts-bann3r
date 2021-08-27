@@ -61,7 +61,8 @@ A example configuration looks like this:
       "font": "Arial.ttf",
       "color": "#000000"
     }
-  ]
+  ],
+  "templatePath": "/path/to/your/template.png"
 }
 ```
 
@@ -87,6 +88,10 @@ The `labels` part configures the shown information on the banner. You can add as
 | `fontSize` | `16`      | Font size of the label in pixel                                                                                                |
 | `font`     | `16`      | Path to a font (See [Fonts](#fonts))                                                                                                   |
 | `color`    | `#000000` | hex color of the label                                                                                                         |
+
+With `templatePath` you can configure the path to the banner template you want to use. By default the it is `template.png` in the same directory as the binary.
+
+> Note: If you change it you also have to change the mount configuration of the docker run command.
 
 ## Placeholder
 
