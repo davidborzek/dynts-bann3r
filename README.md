@@ -26,7 +26,7 @@ make docker_build
         dynts-bann3r
 ```
 
-To configure the application you have to mount a `config.json` and the template banner `banner.png` into the docker container. It is also recommended do mount the localtime of your host system to have correct datetime in the container.
+To configure the application you have to mount a `config.json` and the template banner `template.png` into the docker container. It is also recommended do mount the localtime of your host system to have correct datetime in the container.
 
 ### Build the project without docker
 
@@ -34,7 +34,7 @@ To configure the application you have to mount a `config.json` and the template 
 
 - golang
 
-You can use the make target `make build` to build a binary of the project. After you run the command you can find the binary in `out`. To run the application place the `config.json` and the banner template picture named as `banner.png` in the same directory as the binary.
+You can use the make target `make build` to build a binary of the project. After you run the command you can find the binary in `out`. To run the application place the `config.json` and the banner template picture named as `template.png` in the same directory as the binary.
 
 ## Configuration
 
