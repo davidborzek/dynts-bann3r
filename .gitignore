@@ -7,3 +7,6 @@ go.sum
 .devcontainer
 
 config.json
+
+banner.png
+template.png
