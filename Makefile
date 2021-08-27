@@ -11,6 +11,9 @@ build: deps
 test_unit: deps
 	go test ./...
 
+docker_test:
+	docker build -t dynts-bann3r-unit-test --target test .
+
 docker_build:
 	docker build -t dynts-bann3r .
 
