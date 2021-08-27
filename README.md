@@ -70,24 +70,24 @@ The configuration file has three parts. The `refreshInterval` is the intervals i
 
 The `connection` part configures the connection to your teamspeak 3 server:
 
-| key        | default       | description                               |
-| ---------- | ------------- | ----------------------------------------- |
-| `host`     |               | The hostname or ip of your ts3 server     |
-| `port`     | `10011`       | Server query port of the server           |
-| `serverId` | `1`           | Virtual server id                         |
+| key        | default       | description                                           |
+| ---------- | ------------- | ----------------------------------------------------- |
+| `host`     |               | The hostname or ip of your ts3 server                 |
+| `port`     | `10011`       | Server query port of the server                       |
+| `serverId` | `1`           | Virtual server id                                     |
 | `user`     | `serveradmin` | A server query user (See [Permissions](#permissions)) |
-| `password` |               | Password for the servery query user       |
+| `password` |               | Password for the servery query user                   |
 
 The `labels` part configures the shown information on the banner. You can add as many labels you want and configure each one individually. A label is configured in the following way:
 
-| key        | default   | description                                                                                                                    |
-| ---------- | --------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| key        | default   | description                                                                                                                                  |
+| ---------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | `text`     |           | Custom text and placeholder which are replaced with servery query information or time. (See [Placeholder](#placeholder) for further details) |
-| `x`        |           | The `x` position of the label in pixel.                                                                                        |
-| `y`        |           | The `y` position of the label in pixel.                                                                                        |
-| `fontSize` | `16`      | Font size of the label in pixel                                                                                                |
-| `font`     | `16`      | Path to a font (See [Fonts](#fonts))                                                                                                   |
-| `color`    | `#000000` | hex color of the label                                                                                                         |
+| `x`        |           | The `x` position of the label in pixel.                                                                                                      |
+| `y`        |           | The `y` position of the label in pixel.                                                                                                      |
+| `fontSize` | `16`      | Font size of the label in pixel                                                                                                              |
+| `font`     | `16`      | Path to a font (See [Fonts](#fonts))                                                                                                         |
+| `color`    | `#000000` | hex color of the label                                                                                                                       |
 
 With `templatePath` you can configure the path to the banner template you want to use. By default the it is `template.png` in the same directory as the binary.
 
@@ -95,9 +95,14 @@ With `templatePath` you can configure the path to the banner template you want t
 
 ### Environment variables
 
-Additionally you can configure the path of the configuration file with the environment variable `DYNTS_BANN3R_CONFIG_PATH`. The default value is `config.json` in the same directory as the binary.
+Additionally you can configure the application with some environment variables. 
+| key                        | default       | description                    |
+| -------------------------- | ------------- | ------------------------------ |
+| `DYNTS_BANN3R_CONFIG_PATH` | `config.json` | Path of the configuration file |
+| `DYNTS_BANN3R_PORT`        | `9000`        | Port to serve the banner       |
 
-> Note: If you change this you also have to change the mount configuration of the docker run command.
+
+> Note: If you change this you may have to change the docker run command.
 ## Placeholder
 
 You can dynamically configure the labels by using placeholders in the `text` key of the `label` configuration. The following placeholders are available:

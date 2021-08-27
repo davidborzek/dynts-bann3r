@@ -10,6 +10,7 @@ import (
 	"image/png"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/multiplay/go-ts3"
@@ -18,13 +19,18 @@ import (
 func main() {
 	cfg := config.LoadConfig()
 
+	port := os.Getenv("DYNTS_BANN3R_PORT")
+	if port == "" {
+		port = "9000"
+	}
+
 	client := teamspeak.Login(cfg.Connection)
 	defer client.Close()
 
 	log.Printf("[starting] dynts-bann3r - refreshing every %d seconds \n", cfg.RefreshInterval)
 
+	go serveBanner(port)
 	schedule(cfg, client)
-
 }
 
 var banner i.Image
@@ -32,8 +38,6 @@ var banner i.Image
 func schedule(cfg config.Config, client *ts3.Client) {
 	filledLabels := make([]config.Label, len(cfg.Labels))
 	copy(filledLabels, cfg.Labels)
-
-	go serveBanner()
 
 	for {
 		log.Printf("[schedule] refreshing banner.png \n")
@@ -54,7 +58,7 @@ func schedule(cfg config.Config, client *ts3.Client) {
 	}
 }
 
-func serveBanner() {
+func serveBanner(port string) {
 	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
 		buffer := new(bytes.Buffer)
 		err := png.Encode(buffer, banner)
@@ -64,5 +68,6 @@ func serveBanner() {
 		}
 	})
 
-	log.Fatal(http.ListenAndServe(":9000", nil))
+	log.Println("[http] Serving the banner on localhost:" + port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
