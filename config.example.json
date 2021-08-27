@@ -1,0 +1,20 @@
+{
+  "refreshInterval": 60,
+  "connection": {
+    "host": "TEAMSPEAK_HOST",
+    "port": 10011,
+    "serverId": 1,
+    "user": "TEAMSPEAK_USER (e.g. serveradmin)",
+    "password": "TEAMSPEAK_PW"
+  },
+  "labels": [
+    {
+      "text": "%timeHH%:%timeMM%",
+      "x": 460,
+      "y": 185,
+      "fontSize": 45,
+      "font": "fonts/Arial.ttf",
+      "color": "#000000"
+    }
+  ]
+}

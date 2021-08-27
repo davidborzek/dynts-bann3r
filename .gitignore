@@ -1,1 +1,9 @@
+out
+go.sum
+
+# IDE
+.idea
+.vscode
 .devcontainer
+
+config.json
