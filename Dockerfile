@@ -12,7 +12,7 @@ COPY go.sum .
 
 RUN go mod download
 
-COPY . .
+COPY src src
 
 FROM base as test
 
@@ -30,6 +30,6 @@ RUN cp /build/dynts-bann3r .
 FROM scratch as prod
 
 COPY --from=build /dist/dynts-bann3r /
-COPY --from=build /build/fonts /fonts
+COPY fonts /fonts
 
 CMD ["./dynts-bann3r"]
