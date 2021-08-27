@@ -2,12 +2,13 @@ package image
 
 import (
 	"dynts-bann3r/src/config"
+	"image"
 	"log"
 
 	"github.com/fogleman/gg"
 )
 
-func AddLabelsToImage(labels []config.Label, imagePath string, outputName string) {
+func AddLabelsToImage(labels []config.Label, imagePath string) image.Image {
 	image, err := gg.LoadImage(imagePath)
 
 	if err != nil {
@@ -43,5 +44,5 @@ func AddLabelsToImage(labels []config.Label, imagePath string, outputName string
 	}
 
 	dc.Clip()
-	dc.SavePNG(outputName)
+	return dc.Image()
 }

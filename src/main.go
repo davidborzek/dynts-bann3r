@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"dynts-bann3r/src/config"
 	"dynts-bann3r/src/image"
 	"dynts-bann3r/src/label"
 	"dynts-bann3r/src/teamspeak"
-	"io/ioutil"
+	i "image"
+	"image/png"
 	"log"
 	"net/http"
 	"time"
@@ -24,6 +26,8 @@ func main() {
 	schedule(cfg, client)
 
 }
+
+var banner i.Image
 
 func schedule(cfg config.Config, client *ts3.Client) {
 	filledLabels := make([]config.Label, len(cfg.Labels))
@@ -44,7 +48,7 @@ func schedule(cfg config.Config, client *ts3.Client) {
 			filledLabels[i].Text = text
 		}
 
-		image.AddLabelsToImage(filledLabels, "template.png", "banner.png")
+		banner = image.AddLabelsToImage(filledLabels, "template.png")
 
 		time.Sleep(time.Duration(cfg.RefreshInterval) * time.Second)
 	}
@@ -52,12 +56,11 @@ func schedule(cfg config.Config, client *ts3.Client) {
 
 func serveBanner() {
 	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
-		dat, err := ioutil.ReadFile("banner.png")
+		buffer := new(bytes.Buffer)
+		err := png.Encode(buffer, banner)
 
 		if err == nil {
-			rw.Write(dat)
-		} else {
-			log.Printf("An error occurred serving the banner.png: %v \n", err)
+			rw.Write(buffer.Bytes())
 		}
 	})
 
