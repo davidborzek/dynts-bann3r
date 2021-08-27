@@ -34,6 +34,12 @@ func LoadConfig() Config {
 	viper.SetConfigType("json")
 	viper.AddConfigPath(".")
 
+	viper.SetDefault("RefreshInterval", 60)
+
+	viper.SetDefault("Connection.Port", 10011)
+	viper.SetDefault("Connection.ServerId", 1)
+	viper.SetDefault("Connection.User", "serveradmin")
+
 	var C Config
 
 	err := viper.ReadInConfig()

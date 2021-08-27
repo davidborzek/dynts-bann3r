@@ -21,6 +21,19 @@ func AddLabelsToImage(labels []config.Label, imagePath string, outputName string
 	dc.DrawImage(image, 0, 0)
 
 	for _, label := range labels {
+
+		if label.Color == "" {
+			label.Color = "#000000"
+		}
+
+		if label.Font == "" {
+			label.Font = "Arial.ttf"
+		}
+
+		if label.FontSize == 0 {
+			label.FontSize = 16
+		}
+
 		dc.SetHexColor(label.Color)
 		if err := dc.LoadFontFace("fonts/"+label.Font, label.FontSize); err != nil {
 			panic(err)
