@@ -91,8 +91,13 @@ The `labels` part configures the shown information on the banner. You can add as
 
 With `templatePath` you can configure the path to the banner template you want to use. By default the it is `template.png` in the same directory as the binary.
 
-> Note: If you change it you also have to change the mount configuration of the docker run command.
+> Note: If you change this you also have to change the mount configuration of the docker run command.
 
+### Environment variables
+
+Additionally you can configure the path of the configuration file with the environment variable `DYNTS_BANN3R_CONFIG_PATH`. The default value is `config.json` in the same directory as the binary.
+
+> Note: If you change this you also have to change the mount configuration of the docker run command.
 ## Placeholder
 
 You can dynamically configure the labels by using placeholders in the `text` key of the `label` configuration. The following placeholders are available:

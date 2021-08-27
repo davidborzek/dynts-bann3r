@@ -31,9 +31,14 @@ type Config struct {
 }
 
 func LoadConfig() Config {
+	configPath := os.Getenv("DYNTS_BANN3R_CONFIG_PATH")
+	if configPath == "" {
+		configPath = "."
+	}
+
 	viper.SetConfigName("config.json")
 	viper.SetConfigType("json")
-	viper.AddConfigPath(".")
+	viper.AddConfigPath(configPath)
 
 	viper.SetDefault("RefreshInterval", 60)
 	viper.SetDefault("TemplatePath", "template.png")
