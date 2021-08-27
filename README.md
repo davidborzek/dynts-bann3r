@@ -65,7 +65,7 @@ A example configuration looks like this:
 }
 ```
 
-The configuration file has three parts. The `refreshInterval` is the intervals in second within the banner is updated with information from your teamspeak 3 server. 
+The configuration file has three parts. The `refreshInterval` is the intervals in second within the banner is updated with information from your teamspeak 3 server. The default interval is 60 seconds.
 
 The `connection` part configures the connection to your teamspeak 3 server:
 
