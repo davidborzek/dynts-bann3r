@@ -22,7 +22,7 @@ func AddLabelsToImage(labels []config.Label, imagePath string, outputName string
 
 	for _, label := range labels {
 		dc.SetHexColor(label.Color)
-		if err := dc.LoadFontFace(label.Font, label.FontSize); err != nil {
+		if err := dc.LoadFontFace("fonts/"+label.Font, label.FontSize); err != nil {
 			panic(err)
 		}
 
