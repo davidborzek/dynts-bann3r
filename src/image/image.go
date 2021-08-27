@@ -37,7 +37,11 @@ func AddLabelsToImage(labels []config.Label, imagePath string) image.Image {
 
 		dc.SetHexColor(label.Color)
 		if err := dc.LoadFontFace("fonts/"+label.Font, label.FontSize); err != nil {
-			panic(err)
+			log.Println("[image] font '" + label.Font + "' could not be loaded - using default 'Arial.ttf'")
+
+			if err := dc.LoadFontFace("fonts/Arial.ttf", label.FontSize); err != nil {
+				log.Println(err)
+			}
 		}
 
 		dc.DrawStringAnchored(label.Text, label.X, label.Y, 0.5, float64(gg.AlignCenter))
