@@ -42,7 +42,7 @@ func schedule(cfg config.Config, client *ts3.Client) {
 			text, err := label.GenerateLabel(val.Text, client)
 
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
 			}
 
 			filledLabels[i].Text = text
