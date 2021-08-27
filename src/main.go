@@ -6,7 +6,9 @@ import (
 	"dynts-bann3r/src/label"
 	"dynts-bann3r/src/teamspeak"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/multiplay/go-ts3"
@@ -28,6 +30,8 @@ func schedule(cfg config.Config, client *ts3.Client) {
 	filledLabels := make([]config.Label, len(cfg.Labels))
 	copy(filledLabels, cfg.Labels)
 
+	go serveBanner()
+
 	for {
 		fmt.Printf("updating data...\n")
 
@@ -45,4 +49,16 @@ func schedule(cfg config.Config, client *ts3.Client) {
 
 		time.Sleep(5 * time.Second)
 	}
+}
+
+func serveBanner() {
+	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
+		dat, err := ioutil.ReadFile("banner.png")
+
+		if err == nil {
+			rw.Write(dat)
+		}
+	})
+
+	log.Fatal(http.ListenAndServe(":9000", nil))
 }
