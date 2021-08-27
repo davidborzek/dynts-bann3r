@@ -19,11 +19,11 @@ make docker_build
 ### Run the docker container
 
 ```bash
-	docker run --rm -it -p 9000:9000 \
-        -v path/to/config.json:/config.json \
-        -v path/to/template.png:/template.png \
-        -v /etc/localtime:/etc/localtime:ro \
-        dynts-bann3r
+docker run --rm -it -p 9000:9000 \
+      -v path/to/config.json:/config.json \
+      -v path/to/template.png:/template.png \
+      -v /etc/localtime:/etc/localtime:ro \
+      dynts-bann3r
 ```
 
 To configure the application you have to mount a `config.json` and the template banner `template.png` into the docker container. It is also recommended do mount the localtime of your host system to have correct datetime in the container.
