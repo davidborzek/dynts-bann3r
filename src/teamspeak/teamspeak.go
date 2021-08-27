@@ -31,7 +31,7 @@ func CountOnlineClients(client *ts3.Client) (string, error) {
 	if serverInfo, err := client.Server.Info(); err != nil {
 		return "", err
 	} else {
-		return strconv.Itoa(serverInfo.ClientsOnline), nil
+		return strconv.Itoa(serverInfo.ClientsOnline - serverInfo.QueryClientsOnline), nil
 	}
 }
 

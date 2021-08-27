@@ -109,7 +109,7 @@ You can dynamically configure the labels by using placeholders in the `text` key
 
 | placeholder       | description                                                 |
 | ----------------- | ----------------------------------------------------------- |
-| `%clientsonline%` | It shows the count of all clients that are currently online |
+| `%clientsonline%` | It shows the count of all real clients that are currently online |
 | `%maxclients%`    | It shows the maximal available slots on the server          |
 | `%timeHH%`        | Local time hours e.g. `11`                                  |
 | `%timeMM%`        | Local time minutes e.g. `24`                                |
