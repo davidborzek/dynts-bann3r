@@ -10,36 +10,49 @@ import (
 	"github.com/multiplay/go-ts3"
 )
 
-var m = map[string]func(*ts3.Client) (string, error){
+var tsPlaceholderFunctionMap = map[string]func(*ts3.Client) (string, error){
 	"clientsonline": teamspeak.CountOnlineClients,
 	"maxclients":    teamspeak.GetMaxClients,
-	"timeHH":        utils.GetHours,
-	"timeMM":        utils.GetMinutes,
-	"timeSS":        utils.GetSeconds,
 }
 
-var marg = map[string]func(*ts3.Client, []string) (string, error){
+var tsPlaceholderArgumentFunctionMap = map[string]func(*ts3.Client, []string) (string, error){
 	"groupcount": teamspeak.CountOnlineClientsInGroups,
 }
 
-var replacePlaceholder = func(placeholder string, client *ts3.Client) (string, error) {
-	fn := m[placeholder]
-
-	if fn == nil {
-		return "", errors.New("placeholder: '" + placeholder + "' does not exists")
-	}
-
-	return fn(client)
+var timePlaceholderFunctionMap = map[string]func() string{
+	"timeHH": utils.GetHours,
+	"timeMM": utils.GetMinutes,
+	"timeSS": utils.GetSeconds,
 }
 
-func replacePlaceholderWithArguments(placeholder string, client *ts3.Client, args []string) (string, error) {
-	fn := marg[placeholder]
+var replacePlaceholder = func(placeholder string, client *ts3.Client, args []string) (string, error) {
+	placeholder = strings.ReplaceAll(placeholder, "%", "")
 
-	if fn == nil {
-		return "", errors.New("placeholder: '" + placeholder + "' does not exists")
+	if len(args) > 0 {
+		placeholder = strings.ReplaceAll(placeholder, "["+strings.Join(args, ",")+"]", "")
+
+		fn := tsPlaceholderArgumentFunctionMap[placeholder]
+
+		if fn == nil {
+			return "", errors.New("placeholder with arguments: '" + placeholder + "' does not exists")
+		}
+
+		return fn(client, args)
 	}
 
-	return fn(client, args)
+	if fn := tsPlaceholderFunctionMap[placeholder]; fn == nil {
+		timeFn := timePlaceholderFunctionMap[placeholder]
+
+		if timeFn == nil {
+			return "", errors.New("placeholder: '" + placeholder + "' does not exists")
+		}
+
+		return timeFn(), nil
+
+	} else {
+		return fn(client)
+
+	}
 }
 
 func getPlaceholderList(text string) []string {
@@ -69,19 +82,9 @@ func GenerateLabel(text string, client *ts3.Client) (string, error) {
 	placeholderList := getPlaceholderList(text)
 
 	for _, placeholder := range placeholderList {
-		p := placeholder
+		args := getArguments(placeholder)
 
-		args := getArguments(p)
-
-		var replaced string
-		var err error
-
-		if len(args) > 0 {
-			p := strings.ReplaceAll(p, "["+strings.Join(args, ",")+"]", "")
-			replaced, err = replacePlaceholderWithArguments(strings.ReplaceAll(p, "%", ""), client, args)
-		} else {
-			replaced, err = replacePlaceholder(strings.ReplaceAll(p, "%", ""), client)
-		}
+		replaced, err := replacePlaceholder(placeholder, client, args)
 
 		if err != nil {
 			return "ERROR", err

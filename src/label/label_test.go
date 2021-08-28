@@ -10,16 +10,19 @@ import (
 )
 
 func TestMain(setup *testing.M) {
-	m = map[string]func(*ts3.Client) (string, error){
+	tsPlaceholderFunctionMap = map[string]func(*ts3.Client) (string, error){
 		"clientsonline": func(c *ts3.Client) (string, error) { return "10", nil },
 		"maxclients":    func(c *ts3.Client) (string, error) { return "32", nil },
-		"timeHH":        func(c *ts3.Client) (string, error) { return "00", nil },
-		"timeMM":        func(c *ts3.Client) (string, error) { return "00", nil },
-		"timeSS":        func(c *ts3.Client) (string, error) { return "00", nil },
 	}
 
-	marg = map[string]func(*ts3.Client, []string) (string, error){
+	tsPlaceholderArgumentFunctionMap = map[string]func(*ts3.Client, []string) (string, error){
 		"groupcount": func(c *ts3.Client, a []string) (string, error) { return strings.Join(a, ","), nil },
+	}
+
+	timePlaceholderFunctionMap = map[string]func() string{
+		"timeHH": func() string { return "00" },
+		"timeMM": func() string { return "00" },
+		"timeSS": func() string { return "00" },
 	}
 
 	exitVal := setup.Run()
