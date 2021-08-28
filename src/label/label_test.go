@@ -30,37 +30,36 @@ func TestMain(setup *testing.M) {
 }
 
 func TestGenerateLabelReplacesClientsOnlineCorrectly(t *testing.T) {
-	replaced, _ := GenerateLabel("%clientsonline%", nil)
+	replaced := GenerateLabel("%clientsonline%", nil)
 	assert.Equal(t, replaced, "10")
 }
 
 func TestGenerateLabelReplacesMaxClientsCorrectly(t *testing.T) {
-	replaced, _ := GenerateLabel("%maxclients%", nil)
+	replaced := GenerateLabel("%maxclients%", nil)
 	assert.Equal(t, replaced, "32")
 }
 
 func TestGenerateLabelReplacesTimeHHCorrectly(t *testing.T) {
-	replaced, _ := GenerateLabel("%timeHH%", nil)
+	replaced := GenerateLabel("%timeHH%", nil)
 	assert.Equal(t, replaced, "00")
 }
 
 func TestGenerateLabelReplacesTimeMMCorrectly(t *testing.T) {
-	replaced, _ := GenerateLabel("%timeMM%", nil)
+	replaced := GenerateLabel("%timeMM%", nil)
 	assert.Equal(t, replaced, "00")
 }
 
 func TestGenerateLabelReplacesTimeSSCorrectly(t *testing.T) {
-	replaced, _ := GenerateLabel("%timeSS%", nil)
+	replaced := GenerateLabel("%timeSS%", nil)
 	assert.Equal(t, replaced, "00")
 }
 
 func TestGenerateLabelReplacesGroupCountWithArgsCorrectly(t *testing.T) {
-	replaced, _ := GenerateLabel("%groupcount[1,2,3,4]%", nil)
+	replaced := GenerateLabel("%groupcount[1,2,3,4]%", nil)
 	assert.Equal(t, replaced, "1,2,3,4")
 }
 
 func TestGenerateLabelReturnsErrorForUnknownPlaceholder(t *testing.T) {
-	replaced, err := GenerateLabel("%unknown_placeholer%", nil)
+	replaced := GenerateLabel("%unknown_placeholer%", nil)
 	assert.Equal(t, replaced, "ERROR")
-	assert.Equal(t, err.Error(), "placeholder: 'unknown_placeholer' does not exists")
 }

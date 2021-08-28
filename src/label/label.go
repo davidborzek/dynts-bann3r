@@ -4,6 +4,7 @@ import (
 	"dynts-bann3r/src/teamspeak"
 	"dynts-bann3r/src/utils"
 	"errors"
+	"log"
 	"regexp"
 	"strings"
 
@@ -78,7 +79,7 @@ func getArguments(placeholder string) []string {
 	return args
 }
 
-func GenerateLabel(text string, client *ts3.Client) (string, error) {
+func GenerateLabel(text string, client *ts3.Client) string {
 	placeholderList := getPlaceholderList(text)
 
 	for _, placeholder := range placeholderList {
@@ -87,11 +88,12 @@ func GenerateLabel(text string, client *ts3.Client) (string, error) {
 		replaced, err := replacePlaceholder(placeholder, client, args)
 
 		if err != nil {
-			return "ERROR", err
+			log.Println(err)
+			return "ERROR"
 		}
 
 		text = strings.ReplaceAll(text, placeholder, replaced)
 	}
 
-	return text, nil
+	return text
 }

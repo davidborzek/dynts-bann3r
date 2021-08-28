@@ -43,17 +43,10 @@ func schedule(cfg config.Config, client *ts3.Client) {
 		log.Printf("[schedule] refreshing banner.png \n")
 
 		for i, val := range cfg.Labels {
-			text, err := label.GenerateLabel(val.Text, client)
-
-			if err != nil {
-				log.Println(err)
-			}
-
-			filledLabels[i].Text = text
+			filledLabels[i].Text = label.GenerateLabel(val.Text, client)
 		}
 
 		banner = image.AddLabelsToImage(filledLabels, cfg.TemplatePath)
-
 		time.Sleep(time.Duration(cfg.RefreshInterval) * time.Second)
 	}
 }
