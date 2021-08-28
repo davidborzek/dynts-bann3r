@@ -9,10 +9,11 @@ build: deps
 	go build -o out/dynts-bann3r src/main.go
 
 test_unit: deps
-	go test ./...
+	go test ./... -v
 
 docker_test:
 	docker build -t dynts-bann3r-unit-test --target test .
+	docker run --rm -it dynts-bann3r-unit-test
 
 docker_build:
 	docker build -t dynts-bann3r .

@@ -16,7 +16,7 @@ COPY src src
 
 FROM base as test
 
-RUN [ "go", "test", "./..." ]
+CMD [ "go", "test", "./...", "-v" ]
 
 FROM base as build
 
