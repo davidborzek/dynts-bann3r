@@ -61,6 +61,6 @@ func serveBanner(port string) {
 		}
 	})
 
-	log.Println("[http] Serving the banner on localhost:" + port)
+	log.Println("[INFO] Serving the banner on http://localhost:" + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

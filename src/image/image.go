@@ -37,10 +37,10 @@ func AddLabelsToImage(labels []config.Label, imagePath string) image.Image {
 
 		dc.SetHexColor(label.Color)
 		if err := dc.LoadFontFace("fonts/"+label.Font, label.FontSize); err != nil {
-			log.Println("[image] font '" + label.Font + "' could not be loaded - using default 'Arial.ttf'")
+			log.Println("[WARN] font '" + label.Font + "' could not be loaded - using default font 'Arial.ttf'")
 
 			if err := dc.LoadFontFace("fonts/Arial.ttf", label.FontSize); err != nil {
-				log.Println(err)
+				log.Printf("[ERROR] font Arial.ttf could not be loaded: %v \n", err)
 			}
 		}
 

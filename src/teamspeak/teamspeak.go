@@ -37,17 +37,22 @@ func New(connection config.Connection, adminGroupIds []int) Teamspeak {
 }
 
 func (t Teamspeak) Refresh() {
-	t.refreshServerInfo()
-	t.refreshAdminsOnline()
+	if err := t.refreshServerInfo(); err != nil {
+		log.Printf("[ERROR] Server info could not be refreshed: %v \n", err)
+	}
+
+	if err := t.refreshAdminsOnline(); err != nil {
+		log.Printf("[ERROR] Admins online count could not be refreshed: %v \n", err)
+	}
 }
 
 func (t Teamspeak) State() map[string]string {
 	return state
 }
 
-func (t Teamspeak) refreshServerInfo() {
+func (t Teamspeak) refreshServerInfo() error {
 	if serverInfo, err := t.Client.Server.Info(); err != nil {
-		log.Println(err)
+		return err
 	} else {
 		state["MAX_CLIENTS"] = strconv.Itoa(serverInfo.MaxClients)
 		state["REAL_CLIENTS_ONLINE"] = strconv.Itoa(serverInfo.ClientsOnline - serverInfo.QueryClientsOnline)
@@ -60,14 +65,16 @@ func (t Teamspeak) refreshServerInfo() {
 		state["TIME_HH"] = utils.GetHours()
 		state["TIME_MM"] = utils.GetMinutes()
 		state["TIME_SS"] = utils.GetSeconds()
+
+		return nil
 	}
 }
 
-func (t Teamspeak) refreshAdminsOnline() {
+func (t Teamspeak) refreshAdminsOnline() error {
 	onlineClients, err := t.getOnlineClients()
 
 	if err != nil {
-		log.Println(err)
+		return err
 	}
 
 	onlineClientsInGroups := 0
@@ -75,20 +82,20 @@ func (t Teamspeak) refreshAdminsOnline() {
 	for _, gid := range t.AdminGroupIds {
 		clientsInGroup, err := t.getClientIdsInGroup(gid)
 		if err != nil {
-			log.Println(err)
-			return
+			return err
 		}
 
 		onlineClientsInGroup, err := countOnlineClientsInGroup(clientsInGroup, onlineClients)
 		if err != nil {
-			log.Println(err)
-			return
+			return err
 		}
 
 		onlineClientsInGroups += onlineClientsInGroup
 	}
 
 	state["ADMIN_CLIENTS_ONLINE"] = strconv.Itoa(onlineClientsInGroups)
+
+	return nil
 }
 
 func (t Teamspeak) getOnlineClients() ([]*ts3.OnlineClient, error) {
