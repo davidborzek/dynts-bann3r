@@ -8,7 +8,7 @@ The recommended way to install dynts-bann3r is using the provided docker contain
 
 ### Build the docker container
 
-*Requirements:*
+_Requirements:_
 
 - docker
 
@@ -30,7 +30,7 @@ To configure the application you have to mount a `config.json` and the template 
 
 ### Build the project without docker
 
-*Requirements:*
+_Requirements:_
 
 - golang
 
@@ -52,9 +52,10 @@ A example configuration looks like this:
     "user": "TEAMSPEAK_USER",
     "password": "TEAMSPEAK_PW"
   },
+  "adminGroups": [6, 35],
   "labels": [
     {
-      "text": "%timeHH%:%timeMM%",
+      "text": "%TIME_HH%:%TIME_MM%",
       "x": 460,
       "y": 185,
       "fontSize": 45,
@@ -66,7 +67,7 @@ A example configuration looks like this:
 }
 ```
 
-The configuration file has three parts. The `refreshInterval` is the intervals in second within the banner is updated with information from your teamspeak 3 server. The default interval is 60 seconds.
+The `refreshInterval` is the intervals in second within the banner is updated with information from your teamspeak 3 server. The default interval is 60 seconds.
 
 The `connection` part configures the connection to your teamspeak 3 server:
 
@@ -77,6 +78,8 @@ The `connection` part configures the connection to your teamspeak 3 server:
 | `serverId` | `1`           | Virtual server id                                     |
 | `user`     | `serveradmin` | A server query user (See [Permissions](#permissions)) |
 | `password` |               | Password for the servery query user                   |
+
+The `adminGroups` is an array of server group ids that count a an admin on your server. This is used to display the number of all admins that are online. The default server group is the id `[6]`.
 
 The `labels` part configures the shown information on the banner. You can add as many labels you want and configure each one individually. A label is configured in the following way:
 
@@ -95,31 +98,30 @@ With `templatePath` you can configure the path to the banner template you want t
 
 ### Environment variables
 
-Additionally you can configure the application with some environment variables. 
-| key                        | default       | description                    |
+Additionally you can configure the application with some environment variables.
+| key | default | description |
 | -------------------------- | ------------- | ------------------------------ |
 | `DYNTS_BANN3R_CONFIG_PATH` | `config.json` | Path of the configuration file |
-| `DYNTS_BANN3R_PORT`        | `9000`        | Port to serve the banner       |
-
+| `DYNTS_BANN3R_PORT` | `9000` | Port to serve the banner |
 
 > Note: If you change this you may have to change the docker run command.
+
 ## Placeholder
 
 You can dynamically configure the labels by using placeholders in the `text` key of the `label` configuration. The following placeholders are available:
 
-| placeholder       | description                                                 |
-| ----------------- | ----------------------------------------------------------- |
-| `%clientsonline%` | It shows the count of all real clients that are currently online |
-| `%maxclients%`    | It shows the maximal available slots on the server          |
-| `%timeHH%`        | Local time hours e.g. `11`                                  |
-| `%timeMM%`        | Local time minutes e.g. `24`                                |
-| `%timeSS%`        | Local time seconds e.g. `55`                                |
-
-There are also special placeholders which need arguments to work. Arguments are given comma-separated within square brackets behind the placeholders name (e.g `%placeholder[1,2,3,4]%`) :
-
-| placeholder      | description                                                                                                                  |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `%groupcount[]%` | It counts all online clients in the specified groups. The groups can be specified with their group id in the square brackets |
+| placeholder              | description                                                                                                                                     |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `%REAL_CLIENTS_ONLINE%`  | It shows the count of all real clients that are currently online                                                                                |
+| `%MAX_CLIENTS%`          | It shows the maximal available slots on the server                                                                                              |
+| `%CLIENTS_ONLINE%`       | It shows the count of all clients that are currently online                                                                                     |
+| `%QUERY_CLIENTS_ONLINE%` | It shows the count of all query clients that are currently online                                                                               |
+| `%ADMIN_CLIENTS_ONLINE%` | It shows the count of all admin clients that are currently online. This is based on the server group ids, configured in the configuration file. |
+| `%SERVER_NAME%`          | It shows the name of the server                                                                                                                 |
+| `%SERVER_PORT%`          | It shows the port of the server                                                                                                                 |
+| `%TIME_HH%`              | Local time hours e.g. `11`                                                                                                                      |
+| `%TIME_MM%`              | Local time minutes e.g. `24`                                                                                                                    |
+| `%TIME_SS%`              | Local time seconds e.g. `55`                                                                                                                    |
 
 ## Fonts
 
@@ -135,7 +137,7 @@ The server query user needs permissions to fetch information from your teamspeak
 
 ## Developing setup
 
-*Requirements:*
+_Requirements:_
 
 - golang or docker
 

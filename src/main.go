@@ -12,49 +12,49 @@ import (
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/multiplay/go-ts3"
 )
 
+var ts teamspeak.Teamspeak
+var cfg config.Config
+
 func main() {
-	cfg := config.LoadConfig()
+	cfg = config.LoadConfig()
+	ts = teamspeak.New(cfg.Connection, cfg.AdminGroups)
 
 	port := os.Getenv("DYNTS_BANN3R_PORT")
 	if port == "" {
 		port = "9000"
 	}
 
-	client := teamspeak.Login(cfg.Connection)
-	defer client.Close()
-
-	log.Printf("[starting] dynts-bann3r - refreshing every %d seconds \n", cfg.RefreshInterval)
+	log.Printf("[INFO] dynts-bann3r is starting - refreshing information every %d seconds \n", cfg.RefreshInterval)
 
 	go serveBanner(port)
-	schedule(cfg, client)
+	scheduleRefresh()
 }
 
-var banner i.Image
+func scheduleRefresh() {
+	for {
+		log.Println("[INFO] Refreshing teamspeak server information.")
+		ts.Refresh()
+		time.Sleep(time.Duration(cfg.RefreshInterval) * time.Second)
+	}
+}
 
-func schedule(cfg config.Config, client *ts3.Client) {
+func getBanner() i.Image {
 	filledLabels := make([]config.Label, len(cfg.Labels))
 	copy(filledLabels, cfg.Labels)
 
-	for {
-		log.Printf("[schedule] refreshing banner.png \n")
-
-		for i, val := range cfg.Labels {
-			filledLabels[i].Text = label.GenerateLabel(val.Text, client)
-		}
-
-		banner = image.AddLabelsToImage(filledLabels, cfg.TemplatePath)
-		time.Sleep(time.Duration(cfg.RefreshInterval) * time.Second)
+	for i, val := range cfg.Labels {
+		filledLabels[i].Text = label.ReplacePlaceholders(val.Text, ts.State())
 	}
+
+	return image.AddLabelsToImage(filledLabels, cfg.TemplatePath)
 }
 
 func serveBanner(port string) {
 	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
 		buffer := new(bytes.Buffer)
-		err := png.Encode(buffer, banner)
+		err := png.Encode(buffer, getBanner())
 
 		if err == nil {
 			rw.Write(buffer.Bytes())

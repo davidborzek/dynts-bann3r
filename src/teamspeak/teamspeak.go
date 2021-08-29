@@ -2,6 +2,7 @@ package teamspeak
 
 import (
 	"dynts-bann3r/src/config"
+	"dynts-bann3r/src/utils"
 	"log"
 	"strconv"
 	"strings"
@@ -9,7 +10,14 @@ import (
 	"github.com/multiplay/go-ts3"
 )
 
-func Login(connection config.Connection) *ts3.Client {
+type Teamspeak struct {
+	Client        *ts3.Client
+	AdminGroupIds []int
+}
+
+var state = make(map[string]string)
+
+func New(connection config.Connection, adminGroupIds []int) Teamspeak {
 	client, err := ts3.NewClient(connection.Host + ":" + strconv.Itoa(connection.Port))
 
 	if err != nil {
@@ -24,45 +32,57 @@ func Login(connection config.Connection) *ts3.Client {
 		log.Fatal(err)
 	}
 
-	return client
+	t := Teamspeak{Client: client, AdminGroupIds: adminGroupIds}
+	return t
 }
 
-func CountOnlineClients(client *ts3.Client) (string, error) {
-	if serverInfo, err := client.Server.Info(); err != nil {
-		return "", err
+func (t Teamspeak) Refresh() {
+	t.refreshServerInfo()
+	t.refreshAdminsOnline()
+}
+
+func (t Teamspeak) State() map[string]string {
+	return state
+}
+
+func (t Teamspeak) refreshServerInfo() {
+	if serverInfo, err := t.Client.Server.Info(); err != nil {
+		log.Println(err)
 	} else {
-		return strconv.Itoa(serverInfo.ClientsOnline - serverInfo.QueryClientsOnline), nil
+		state["MAX_CLIENTS"] = strconv.Itoa(serverInfo.MaxClients)
+		state["REAL_CLIENTS_ONLINE"] = strconv.Itoa(serverInfo.ClientsOnline - serverInfo.QueryClientsOnline)
+		state["CLIENTS_ONLINE"] = strconv.Itoa(serverInfo.ClientsOnline)
+		state["QUERY_CLIENTS_ONLINE"] = strconv.Itoa(serverInfo.QueryClientsOnline)
+
+		state["SERVER_NAME"] = serverInfo.Name
+		state["SERVER_PORT"] = strconv.Itoa(serverInfo.Port)
+
+		state["TIME_HH"] = utils.GetHours()
+		state["TIME_MM"] = utils.GetMinutes()
+		state["TIME_SS"] = utils.GetSeconds()
 	}
 }
 
-func GetMaxClients(client *ts3.Client) (string, error) {
-	if serverInfo, err := client.Server.Info(); err != nil {
-		return "", err
-	} else {
-		return strconv.Itoa(serverInfo.MaxClients), nil
-	}
-}
-
-func CountOnlineClientsInGroups(client *ts3.Client, gIds []string) (string, error) {
-	onlineClients, err := getOnlineClients(client)
+func (t Teamspeak) refreshAdminsOnline() {
+	onlineClients, err := getOnlineClients(t.Client)
 
 	if err != nil {
-		return "", err
+		log.Println(err)
 	}
 
 	onlineClientsInGroups := 0
 
-	for _, gid := range gIds {
-		onlineClientsInGroup, err := countOnlineClientsInGroup(client, gid, onlineClients)
+	for _, gid := range t.AdminGroupIds {
+		onlineClientsInGroup, err := countOnlineClientsInGroup(t.Client, gid, onlineClients)
 
 		if err != nil {
-			return "", err
+			log.Println(err)
 		}
 
 		onlineClientsInGroups += onlineClientsInGroup
 	}
 
-	return strconv.Itoa(onlineClientsInGroups), nil
+	state["ADMIN_CLIENTS_ONLINE"] = strconv.Itoa(onlineClientsInGroups)
 }
 
 func getOnlineClients(client *ts3.Client) ([]*ts3.OnlineClient, error) {
@@ -73,14 +93,8 @@ func getOnlineClients(client *ts3.Client) ([]*ts3.OnlineClient, error) {
 	}
 }
 
-func countOnlineClientsInGroup(client *ts3.Client, gid string, onlineClients []*ts3.OnlineClient) (int, error) {
-	intGid, err := strconv.Atoi(gid)
-
-	if err != nil {
-		return 0, err
-	}
-
-	clientsInGroup, err := getClientIdsInGroup(client, intGid)
+func countOnlineClientsInGroup(client *ts3.Client, gid int, onlineClients []*ts3.OnlineClient) (int, error) {
+	clientsInGroup, err := getClientIdsInGroup(client, gid)
 
 	if err != nil {
 		return 0, err
