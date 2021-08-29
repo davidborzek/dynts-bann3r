@@ -13,7 +13,7 @@ func ReplacePlaceholders(text string, values map[string]string) string {
 		p := strings.ReplaceAll(placeholder, "%", "")
 		value := values[p]
 
-		if p == "" {
+		if value == "" {
 			log.Println("[ERROR] Placeholder '" + placeholder + "' does not exists.")
 			return "ERROR"
 		}
