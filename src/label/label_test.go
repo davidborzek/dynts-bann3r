@@ -13,6 +13,7 @@ func TestMain(setup *testing.M) {
 	tsPlaceholderFunctionMap = map[string]func(*ts3.Client) (string, error){
 		"clientsonline": func(c *ts3.Client) (string, error) { return "10", nil },
 		"maxclients":    func(c *ts3.Client) (string, error) { return "32", nil },
+		"servername":    func(c *ts3.Client) (string, error) { return "dynts-bann3r", nil },
 	}
 
 	tsPlaceholderArgumentFunctionMap = map[string]func(*ts3.Client, []string) (string, error){
@@ -37,6 +38,11 @@ func TestGenerateLabelReplacesClientsOnlineCorrectly(t *testing.T) {
 func TestGenerateLabelReplacesMaxClientsCorrectly(t *testing.T) {
 	replaced := GenerateLabel("%maxclients%", nil)
 	assert.Equal(t, replaced, "32")
+}
+
+func TestGenerateLabelReplacesServernameCorrectly(t *testing.T) {
+	replaced := GenerateLabel("%servername%", nil)
+	assert.Equal(t, replaced, "dynts-bann3r")
 }
 
 func TestGenerateLabelReplacesTimeHHCorrectly(t *testing.T) {

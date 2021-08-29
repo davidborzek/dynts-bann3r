@@ -43,6 +43,14 @@ func GetMaxClients(client *ts3.Client) (string, error) {
 	}
 }
 
+func GetServerName(client *ts3.Client) (string, error) {
+	if serverInfo, err := client.Server.Info(); err != nil {
+		return "", err
+	} else {
+		return serverInfo.Name, nil
+	}
+}
+
 func CountOnlineClientsInGroups(client *ts3.Client, gIds []string) (string, error) {
 	onlineClients, err := getOnlineClients(client)
 
