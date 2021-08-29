@@ -69,3 +69,8 @@ func Test_ReplacePlaceholders_Replaces_TIME_SS_Correctly(t *testing.T) {
 	replaced := label.ReplacePlaceholders("%TIME_SS%", testPlaceholderValueMap)
 	assert.Equal(t, replaced, "13")
 }
+
+func Test_ReplacePlaceholders_Replaces_Unknown_Placeholder_With_ERROR(t *testing.T) {
+	replaced := label.ReplacePlaceholders("%UNKNOWN_PLACEHOLDER%", testPlaceholderValueMap)
+	assert.Equal(t, replaced, "ERROR")
+}
