@@ -127,6 +127,7 @@ Currently there is a choice of available fonts. In future releases you should be
 You can use them by assigning one of the following fonts to the `font` key of your `label` configuration.
 
 - `Arial.ttf`
+- `Bold.ttf`
 
 ## Permissions
 
