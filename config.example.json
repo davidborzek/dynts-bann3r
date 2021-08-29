@@ -7,9 +7,10 @@
     "user": "TEAMSPEAK_USER (e.g. serveradmin)",
     "password": "TEAMSPEAK_PW"
   },
+  "adminGroups": [6, 35],
   "labels": [
     {
-      "text": "%timeHH%:%timeMM%",
+      "text": "%TIME_HH%:%TIME_MM%",
       "x": 460,
       "y": 185,
       "fontSize": 45,
