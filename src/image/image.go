@@ -8,6 +8,38 @@ import (
 	"github.com/fogleman/gg"
 )
 
+func AddLabelToImage(label config.Label, image image.Image) image.Image {
+	imgWidth := image.Bounds().Dx()
+	imgHeight := image.Bounds().Dy()
+
+	dc := gg.NewContext(imgWidth, imgHeight)
+	dc.DrawImage(image, 0, 0)
+
+	if label.Color == "" {
+		label.Color = "#000000"
+	}
+
+	if label.Font == "" {
+		label.Font = "Arial.ttf"
+	}
+
+	if label.FontSize == 0 {
+		label.FontSize = 16
+	}
+
+	dc.SetHexColor(label.Color)
+	if err := dc.LoadFontFace("fonts/"+label.Font, label.FontSize); err != nil {
+		log.Println("[image] font '" + label.Font + "' could not be loaded - using default 'Arial.ttf'")
+
+		if err := dc.LoadFontFace("fonts/Arial.ttf", label.FontSize); err != nil {
+			log.Println(err)
+		}
+	}
+
+	dc.Clip()
+	return dc.Image()
+}
+
 func AddLabelsToImage(labels []config.Label, imagePath string) image.Image {
 	image, err := gg.LoadImage(imagePath)
 

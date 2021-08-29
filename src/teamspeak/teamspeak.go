@@ -3,11 +3,14 @@ package teamspeak
 import (
 	"dynts-bann3r/src/config"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/multiplay/go-ts3"
 )
+
+var clientIpNicknameMap map[string]string
 
 func Login(connection config.Connection) *ts3.Client {
 	client, err := ts3.NewClient(connection.Host + ":" + strconv.Itoa(connection.Port))
@@ -57,6 +60,34 @@ func GetServerPort(client *ts3.Client) (string, error) {
 	} else {
 		return strconv.Itoa(serverInfo.Port), nil
 	}
+}
+
+func RefreshClientIpNicknameMap(client *ts3.Client) map[string]string {
+	onlineClientListWithIpsRaw, _ := client.Server.Exec("clientlist -ip")
+	onlineClientListWithIpsRaw = strings.Split(onlineClientListWithIpsRaw[0], "|")
+
+	nicknameRegexp, _ := regexp.Compile(`client_nickname=[^\s]+`)
+	ipRegexp, _ := regexp.Compile(`connection_client_ip=[^\s]+`)
+
+	var ipMap = make(map[string]string)
+
+	for _, value := range onlineClientListWithIpsRaw {
+		nicknameMatch := nicknameRegexp.FindAllString(value, 1)[0]
+		ipMatch := ipRegexp.FindAllString(value, 1)[0]
+
+		if nicknameMatch != "" && ipMatch != "" {
+			ipMap[strings.ReplaceAll(ipMatch, "connection_client_ip=", "")] = strings.ReplaceAll(nicknameMatch, "client_nickname=", "")
+		}
+
+	}
+
+	clientIpNicknameMap = ipMap
+
+	return ipMap
+}
+
+func GetNickname(ip string) string {
+	return clientIpNicknameMap[ip]
 }
 
 func CountOnlineClientsInGroups(client *ts3.Client, gIds []string) (string, error) {

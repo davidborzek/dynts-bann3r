@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/multiplay/go-ts3"
@@ -29,11 +30,13 @@ func main() {
 
 	log.Printf("[starting] dynts-bann3r - refreshing every %d seconds \n", cfg.RefreshInterval)
 
-	go serveBanner(port)
+	go serveBanner(port, cfg.Labels)
 	schedule(cfg, client)
 }
 
 var banner i.Image
+
+var clientIpNicknameMap map[string]string
 
 func schedule(cfg config.Config, client *ts3.Client) {
 	filledLabels := make([]config.Label, len(cfg.Labels))
@@ -42,8 +45,14 @@ func schedule(cfg config.Config, client *ts3.Client) {
 	for {
 		log.Printf("[schedule] refreshing banner.png \n")
 
+		clientIpNicknameMap = teamspeak.RefreshClientIpNicknameMap(client)
+
 		for i, val := range cfg.Labels {
-			filledLabels[i].Text = label.GenerateLabel(val.Text, client)
+			if !strings.Contains(val.Text, "%nickname%") {
+				filledLabels[i].Text = label.GenerateLabel(val.Text, client)
+			} else {
+				filledLabels[i].Text = ""
+			}
 		}
 
 		banner = image.AddLabelsToImage(filledLabels, cfg.TemplatePath)
@@ -51,10 +60,26 @@ func schedule(cfg config.Config, client *ts3.Client) {
 	}
 }
 
-func serveBanner(port string) {
+func serveBanner(port string, labels []config.Label) {
 	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
+		remoteIp := strings.Split(r.RemoteAddr, ":")[0]
+		log.Println(remoteIp)
+
+		servedBanner := banner
+
+		nickname := clientIpNicknameMap[remoteIp]
+
+		log.Println(nickname)
+
+		for i, label := range labels {
+			if nickname != "" && strings.Contains(label.Text, "%nickname%") {
+				labels[i].Text = strings.ReplaceAll(labels[i].Text, "%nickname%", nickname)
+				servedBanner = image.AddLabelToImage(labels[i], servedBanner)
+			}
+		}
+
 		buffer := new(bytes.Buffer)
-		err := png.Encode(buffer, banner)
+		err := png.Encode(buffer, servedBanner)
 
 		if err == nil {
 			rw.Write(buffer.Bytes())
