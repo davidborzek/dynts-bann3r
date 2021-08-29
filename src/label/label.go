@@ -15,6 +15,7 @@ var tsPlaceholderFunctionMap = map[string]func(*ts3.Client) (string, error){
 	"clientsonline": teamspeak.CountOnlineClients,
 	"maxclients":    teamspeak.GetMaxClients,
 	"servername":    teamspeak.GetServerName,
+	"serverport":    teamspeak.GetServerPort,
 }
 
 var tsPlaceholderArgumentFunctionMap = map[string]func(*ts3.Client, []string) (string, error){

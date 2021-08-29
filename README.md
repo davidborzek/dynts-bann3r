@@ -112,6 +112,7 @@ You can dynamically configure the labels by using placeholders in the `text` key
 | `%clientsonline%` | It shows the count of all real clients that are currently online |
 | `%maxclients%`    | It shows the maximal available slots on the server          |
 | `%servername%`    | It shows the name of the server                             |
+| `%serverport%`    | It shows the port of the server                             |
 | `%timeHH%`        | Local time hours e.g. `11`                                  |
 | `%timeMM%`        | Local time minutes e.g. `24`                                |
 | `%timeSS%`        | Local time seconds e.g. `55`                                |
