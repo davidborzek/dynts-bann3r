@@ -64,7 +64,7 @@ func (t Teamspeak) refreshServerInfo() {
 }
 
 func (t Teamspeak) refreshAdminsOnline() {
-	onlineClients, err := getOnlineClients(t.Client)
+	onlineClients, err := t.getOnlineClients()
 
 	if err != nil {
 		log.Println(err)
@@ -73,10 +73,16 @@ func (t Teamspeak) refreshAdminsOnline() {
 	onlineClientsInGroups := 0
 
 	for _, gid := range t.AdminGroupIds {
-		onlineClientsInGroup, err := countOnlineClientsInGroup(t.Client, gid, onlineClients)
-
+		clientsInGroup, err := t.getClientIdsInGroup(gid)
 		if err != nil {
 			log.Println(err)
+			return
+		}
+
+		onlineClientsInGroup, err := countOnlineClientsInGroup(clientsInGroup, onlineClients)
+		if err != nil {
+			log.Println(err)
+			return
 		}
 
 		onlineClientsInGroups += onlineClientsInGroup
@@ -85,29 +91,19 @@ func (t Teamspeak) refreshAdminsOnline() {
 	state["ADMIN_CLIENTS_ONLINE"] = strconv.Itoa(onlineClientsInGroups)
 }
 
-func getOnlineClients(client *ts3.Client) ([]*ts3.OnlineClient, error) {
-	if clients, err := client.Server.ClientList(); err != nil {
+func (t Teamspeak) getOnlineClients() ([]*ts3.OnlineClient, error) {
+	if clients, err := t.Client.Server.ClientList(); err != nil {
 		return nil, err
 	} else {
 		return clients, nil
 	}
 }
 
-func countOnlineClientsInGroup(client *ts3.Client, gid int, onlineClients []*ts3.OnlineClient) (int, error) {
-	clientsInGroup, err := getClientIdsInGroup(client, gid)
-
-	if err != nil {
-		return 0, err
-	}
-
+func countOnlineClientsInGroup(clientsInGroup []int, onlineClients []*ts3.OnlineClient) (int, error) {
 	onlineClientsInGroup := 0
 
 	for _, clientIdInGroup := range clientsInGroup {
 		for _, onlineClient := range onlineClients {
-			if err != nil {
-				return 0, err
-			}
-
 			if onlineClient.DatabaseID == clientIdInGroup {
 				onlineClientsInGroup++
 			}
@@ -115,21 +111,19 @@ func countOnlineClientsInGroup(client *ts3.Client, gid int, onlineClients []*ts3
 	}
 
 	return onlineClientsInGroup, nil
-
 }
 
-func getClientIdsInGroup(client *ts3.Client, gid int) ([]int, error) {
+func (t Teamspeak) getClientIdsInGroup(gid int) ([]int, error) {
 	cmd := ts3.NewCmd("servergroupclientlist")
 	arg := ts3.NewArg("sgid", gid)
 	cmd.WithArgs(arg)
 
 	var clientIds []int
 
-	out, err := client.ExecCmd(cmd)
+	out, err := t.Client.ExecCmd(cmd)
 
 	if err == nil && len(out) > 0 {
 		strIds := strings.ReplaceAll(out[0], "cldbid=", "")
-
 		ids := strings.Split(strIds, "|")
 
 		for _, strId := range ids {
